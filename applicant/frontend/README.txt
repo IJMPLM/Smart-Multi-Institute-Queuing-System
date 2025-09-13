@@ -5,7 +5,7 @@ This repository contains the front-end implementation of the project Smart-Multi
 
 Contributors:
 Front End Lead:
-1. //Name
+1. //Michael
 2. //Name
 3. //Name
 4. //Name
