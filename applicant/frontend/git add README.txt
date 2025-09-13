@@ -4,9 +4,8 @@ Description:
 This repository contains the front-end implementation of the project Smart-Multi-Institute-Queuing-System.
 
 Contributors:
-Michael
 Front End Lead:
-1. //Name
+1. //Michael Angelo ll M. Libang
 2. //Name
 3. //Name
 4. //Name
