@@ -9,7 +9,7 @@ Front End Lead:
 2. Marc Cedric S. Gerona
 3. Marc Jerome S. Balboa
 4. Floyd M. Robante
-5. //Name
+5. Juana Mari A. Del Rosario
 6. //Name
 7. //Name
 8. //Name
