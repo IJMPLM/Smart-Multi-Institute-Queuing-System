@@ -7,11 +7,14 @@ Contributors:
 Front End Lead:
 1. Mariel Kim R. Vaflor
 2. Marc Cedric S. Gerona
-3. Floyd M. Robante
-4. //Name
+3. Marc Jerome S. Balboa
+4. Floyd M. Robante
 5. //Name
 6. //Name
 7. //Name
 8. //Name
 9. //Name
 10. //Name
+
+PM
+1. Iwag
