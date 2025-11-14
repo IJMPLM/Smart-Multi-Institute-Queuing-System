@@ -1,9 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import ChatInterface from "@/components/ChatInterface";
-import FeedbackPage from "@/components/FeedbackPage";
-import FormFillingPage from "@/components/FormFillingPage";
+import { useRouter } from "next/navigation";
 import QueueChatUI from "@/components/Status";
 // Desktop flow: StartScreen and ConsentScreen are defined here. MenuScreen lives inside ChatInterface.
 
@@ -111,6 +109,7 @@ function DataPrivacyModal({
 }
 
 export default function Home() {
+  const router = useRouter();
   const [isDesktop, setIsDesktop] = useState(false);
 
   useEffect(() => {
@@ -131,34 +130,29 @@ export default function Home() {
     "start" | "consent" | "menu"
   >("start");
   const [consented, setConsented] = useState(false);
-  const [showChat, setShowChat] = useState(false);
-  const [showFeedback, setShowFeedback] = useState(false);
-  const [showForm, setShowForm] = useState(false);
+  const [showChat] = useState(false);
   // showStatus controls visibility of the queue status panel.
   // It should only be shown after the user submits the form.
-  const [showStatus, setShowStatus] = useState(false);
+  const [showStatus] = useState(false);
 
   const handleProceed = () => {
     setConsented(true);
   };
 
   const handleDecline = () => {
-    setShowFeedback(true);
-  };
-
-  const handleBackFromFeedback = () => {
-    setShowFeedback(false);
-  };
-
-  const handleBackFromForm = () => {
-    setShowForm(false);
-    setShowChat(true);
-    setShowStatus(true);
+    router.push("/feedback");
   };
 
   const handleShowFeedback = () => {
-    setShowFeedback(true);
+    router.push("/feedback");
   };
+
+  // Handle navigation to chat when desktop reaches menu screen
+  useEffect(() => {
+    if (isDesktop && desktopScreen === "menu" && !showStatus) {
+      router.push("/chat");
+    }
+  }, [isDesktop, desktopScreen, showStatus, router]);
 
   // If desktop viewport, show the desktop start/consent screens here.
   if (isDesktop) {
@@ -216,96 +210,86 @@ export default function Home() {
       );
     }
 
-    // desktopScreen === 'menu' -> render ChatInterface in menu mode
-    // If feedback should be shown (after clicking status), show feedback page
-    if (showFeedback) {
-      return <FeedbackPage onBack={handleBackFromFeedback} />;
-    }
-
-    // If status should be shown after form submission, show the queue status
+    // desktopScreen === 'menu' -> Navigate to chat page
+    // Navigation handled by useEffect to avoid rendering during render
     if (showStatus) {
       return <QueueChatUI onShowFeedback={handleShowFeedback} />;
     }
 
-    // If the user requested the form on desktop, show the form page instead of the chat
-    if (showForm) {
-      return <FormFillingPage onBack={handleBackFromForm} />;
-    }
-
-    return <ChatInterface onShowForm={() => setShowForm(true)} desktopMenu />;
+    // Return loading state while navigation is in progress
+    return (
+      <div className="h-full flex items-center justify-center">
+        <p className="text-gray-600">Loading...</p>
+      </div>
+    );
   }
 
   return (
     <>
-      {/* Show Form Page */}
-      {showForm ? (
-        <FormFillingPage onBack={handleBackFromForm} />
-      ) : showFeedback ? (
-        /* Show Feedback Page when declined */
-        <FeedbackPage onBack={handleBackFromFeedback} />
+      {/* Data Privacy Modal (shown first) */}
+      {!consented && (
+        <DataPrivacyModal
+          key="privacy-modal"
+          onProceed={handleProceed}
+          onDecline={handleDecline}
+        />
+      )}
+
+      {/* Main Content */}
+      {showChat ? (
+        <div>
+          {/* Status panel should be visible only after form submission */}
+          {showStatus && <QueueChatUI />}
+          <button
+            onClick={() => router.push("/chat")}
+            className="w-full p-4 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Go to Chat
+          </button>
+        </div>
       ) : (
-        <>
-          {/* Data Privacy Modal (shown first) */}
-          {!consented && (
-            <DataPrivacyModal
-              key="privacy-modal"
-              onProceed={handleProceed}
-              onDecline={handleDecline}
+        <div className="flex flex-col items-center justify-center flex-1 px-6">
+          <div className="h-20 w-20 rounded-full bg-[#34495E] mb-4" />
+          <h2 className="text-xl font-bold text-black">Welcome!</h2>
+          <p className="italic text-black mb-8">Let’s get started</p>
+
+          <div className="w-full max-w-sm space-y-4">
+            <div className="h-20 w-full rounded-lg bg-[#34495E]" />
+            <div className="h-20 w-full rounded-lg bg-[#34495E]" />
+          </div>
+        </div>
+      )}
+
+      {/* Footer */}
+      {consented && !showChat && (
+        <footer className="sticky bottom-0 z-10 flex flex-col gap-2 border-t bg-[#34495E] p-4">
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              placeholder="Where..."
+              className="flex-1 rounded-2xl bg-gray-300 px-4 py-2 text-sm text-black placeholder:text-[#34495E] focus:outline-none"
             />
-          )}
-
-          {/* Main Content */}
-          {showChat ? (
-            <div>
-              {/* Status panel should be visible only after form submission */}
-              {showStatus && <QueueChatUI />}
-              <ChatInterface onShowForm={() => setShowForm(true)} />
-            </div>
-          ) : (
-            <div className="flex flex-col items-center justify-center flex-1 px-6">
-              <div className="h-20 w-20 rounded-full bg-[#34495E] mb-4" />
-              <h2 className="text-xl font-bold text-black">Welcome!</h2>
-              <p className="italic text-black mb-8">Let’s get started</p>
-
-              <div className="w-full max-w-sm space-y-4">
-                <div className="h-20 w-full rounded-lg bg-[#34495E]" />
-                <div className="h-20 w-full rounded-lg bg-[#34495E]" />
-              </div>
-            </div>
-          )}
-
-          {/* Footer */}
-          {consented && !showChat && (
-            <footer className="sticky bottom-0 z-10 flex flex-col gap-2 border-t bg-[#34495E] p-4">
-              <div className="flex items-center gap-2">
-                <input
-                  type="text"
-                  placeholder="Where..."
-                  className="flex-1 rounded-2xl bg-gray-300 px-4 py-2 text-sm text-black placeholder:text-[#34495E] focus:outline-none"
-                />
-                <button className="rounded-full p-3">
-                  <Image src="/send.png" alt="Send" width={23} height={23} />
-                </button>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  className="flex-1 rounded-full bg-gray-300 px-4 py-1.5 text-sm text-black hover:bg-gray-200"
-                  onClick={() => setShowChat(true)}
-                >
-                  I would like to inquire.
-                </button>
-                <button
-                  type="button"
-                  className="flex-1 rounded-full bg-gray-300 px-4 py-1.5 text-sm text-black hover:bg-gray-200"
-                  onClick={() => setShowForm(true)}
-                >
-                  Fill Form
-                </button>
-              </div>
-            </footer>
-          )}
-        </>
+            <button className="rounded-full p-3">
+              <Image src="/send.png" alt="Send" width={23} height={23} />
+            </button>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="flex-1 rounded-full bg-gray-300 px-4 py-1.5 text-sm text-black hover:bg-gray-200"
+              onClick={() => router.push("/chat")}
+            >
+              I would like to inquire.
+            </button>
+            <button
+              type="button"
+              className="flex-1 rounded-full bg-gray-300 px-4 py-1.5 text-sm text-black hover:bg-gray-200"
+              onClick={() => router.push("/form")}
+            >
+              Fill Form
+            </button>
+          </div>
+        </footer>
       )}
     </>
   );

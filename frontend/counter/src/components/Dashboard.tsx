@@ -1,186 +1,114 @@
-"use client";
-import React, { useEffect, useState } from "react";
+import React from 'react';
+import { Search, UserCheck, Users, Ticket, List } from 'lucide-react';
 
-interface DashboardViewProps {
-    onLogout: () => void;
-}
+// Mock data for the queue list
+const queueData = [
+  { queueNo: 'A001', name: 'John Smith', request: 'Document Request', status: 'In Progress' },
+  { queueNo: 'A002', name: 'Sarah Johnson', request: 'Inquiry', status: 'Waiting' },
+  { queueNo: 'A003', name: 'Michael Brown', request: 'Payment Processing', status: 'Waiting' },
+  { queueNo: 'A004', name: 'Emily Davis', request: 'Document Request', status: 'Waiting' },
+  { queueNo: 'A005', name: 'David Wilson', request: 'Application Submission', status: 'Waiting' },
+];
 
-interface QueueStatus {
-    inProgress: string;
-    nextInLine: string;
-    inQueue: string;
-}
-
-interface Applicant {
-    name: string;
-    queue: string;
-    request: string;
-}
-
-interface CounterStatus {
-    status: string;
-    queue: string;
-}
-
-interface DashboardData {
-    queueStatus: QueueStatus;
-    applicant: Applicant;
-    counterStatus: CounterStatus;
-}
-
-export default function Dashboard({ onLogout }: DashboardViewProps) {
-    const [dashboardData, setDashboardData] = useState<DashboardData | null>(null);
-    const darkCardBg = 'bg-[#34495E]';
-
-    // Fetch dashboard data from API
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            try {
-                const response = await fetch('http://localhost:4000/api/templates/counter-dashboard');
-                if (response.ok) {
-                    const data = await response.json();
-                    setDashboardData(data);
-                } else {
-                    console.log('Missing API for /api/templates/counter-dashboard - using fallback data');
-                    // Fallback data
-                    setDashboardData({
-                        queueStatus: { inProgress: '0311', nextInLine: '0312', inQueue: '0200' },
-                        applicant: { name: 'Juana Del Rosario', queue: '0311', request: 'Marriage Certificate' },
-                        counterStatus: { status: 'BUSY', queue: '0311' }
-                    });
-                }
-            } catch (error) {
-                console.log('Missing API for /api/templates/counter-dashboard - fetch failed:', error);
-                // Fallback data
-                setDashboardData({
-                    queueStatus: { inProgress: '0311', nextInLine: '0312', inQueue: '0200' },
-                    applicant: { name: 'Juana Del Rosario', queue: '0311', request: 'Marriage Certificate' },
-                    counterStatus: { status: 'BUSY', queue: '0311' }
-                });
-            }
-        };
-
-        fetchDashboardData();
-    }, []);
-
-    const handleProcess = () => {
-        console.log('Missing API for process action');
-    };
-
-    const handleMissing = () => {
-        console.log('Missing API for missing action');
-    };
-
-    const handleClosed = () => {
-        console.log('Missing API for closed action');
-    };
-
-    if (!dashboardData) {
-        return <div>Loading...</div>;
-    }
-
-    return (
-        <div className="flex min-h-screen bg-gray-50">
-            
-            {/* 1. Left Sidebar Navigation */}
-            <aside className="w-64 bg-[#34495E] shadow-lg p-4 flex flex-col pt-24 items-center">
-                <div className="h-54 w-54 bg-gray-200 rounded-lg mb-32"></div> 
-                
-                {/* Navigation Links Group - Centered Buttons */}
-                <div className="w-full flex flex-col items-center space-y-4 mb-6">
-                    <button className="py-3 px-8 rounded-lg bg-gray-200 text-gray-700 font-semibold shadow-md hover:bg-gray-300 transition duration-150 w-5/6">
-                        Dashboard
-                    </button>
-                    <button className="py-3 px-8 rounded-lg bg-[#859295] text-white font-medium transition duration-150 w-5/6">
-                        Applicant
-                    </button>
-                </div>
-
-                {/* Log Out button pushed to the very bottom */}
-                <button 
-                    onClick={onLogout} // Call the prop function to switch view
-                    className="w-5/6 text-center py-3 px-4 rounded-lg bg-red-500 text-white font-medium hover:bg-red-600 transition duration-150 mt-auto mx-auto"
-                >
-                    Log Out
-                </button>
-            </aside>
-
-            {/* 2. Main Content Area */}
-            <main className="flex-1 p-8 space-y-6">
-                
-                {/* Top Search Bar (Mock) */}
-                <div className="flex justify-end">
-                    <input
-                        type="search"
-                        placeholder="Q"
-                        className="w-80 h-10 px-4 rounded-lg border border-gray-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-150"
-                    />
-                </div>
-
-                {/* Queue Status Cards */}
-                <h2 className="text-lg font-bold text-gray-700">Queue Status:</h2>
-                <div className="grid grid-cols-3 gap-6">
-                    
-                    {/* In Progress Card (Dark Blue) */}
-                    <div className={`p-6 rounded-lg ${darkCardBg} shadow-xl text-white`}>
-                        <p className="text-sm opacity-80">In Progress:</p>
-                        <p className="text-5xl font-extrabold mt-1">{dashboardData.queueStatus.inProgress}</p>
-                    </div>
-
-                    {/* Next in Line Card (Gray) */}
-                    <div className="p-6 rounded-lg bg-gray-500 shadow-xl text-white">
-                        <p className="text-sm opacity-80">Next in Line:</p>
-                        <p className="text-5xl font-extrabold mt-1">{dashboardData.queueStatus.nextInLine}</p>
-                    </div>
-
-                    {/* In Queue Card (Light Gray) */}
-                    <div className="p-6 rounded-lg bg-gray-400 shadow-xl text-white">
-                        <p className="text-sm opacity-80">In Queue:</p>
-                        <p className="text-5xl font-extrabold mt-1">{dashboardData.queueStatus.inQueue}</p>
-                    </div>
-                </div>
-
-                {/* Applicant Info Block */}
-                <h2 className="text-lg font-bold text-gray-700 pt-4">Applicant Details:</h2>
-                <div className={`p-6 rounded-lg ${darkCardBg} shadow-xl text-white`}>
-                    <h3 className="text-lg font-bold mb-3">Applicant Info:</h3>
-                    <div className="space-y-2 text-sm">
-                        <p>Name: <span className="font-semibold">{dashboardData.applicant.name}</span></p>
-                        <p>Queue: <span className="font-semibold">{dashboardData.applicant.queue}</span></p>
-                        <p>Request: <span className="font-semibold">{dashboardData.applicant.request}</span></p>
-                    </div>
-                </div>
-                
-                {/* Action Buttons */}
-                <div className="flex space-x-6 justify-center pt-2">
-                    <button 
-                        onClick={handleProcess}
-                        className="py-3 px-8 text-white font-bold rounded-full bg-green-600 hover:bg-green-700 transition duration-150 shadow-md">
-                        Process
-                    </button>
-                    <button 
-                        onClick={handleMissing}
-                        className={`py-3 px-8 text-white font-bold rounded-full ${darkCardBg} hover:bg-gray-700 transition duration-150 shadow-md`}>
-                        Missing
-                    </button>
-                    <button 
-                        onClick={handleClosed}
-                        className="py-3 px-8 text-white font-bold rounded-full bg-red-600 hover:bg-red-700 transition duration-150 shadow-md">
-                        Closed
-                    </button>
-                </div>
-
-                {/* Counter Current Status */}
-                <div className="mt-8 pt-4">
-                    <h2 className="text-lg font-bold text-gray-700">Counter Current Status:</h2>
-                    <div className="mt-2 p-4 rounded-lg bg-gray-200 border border-gray-300">
-                        <p className="text-sm font-bold text-gray-700">
-                            Status : <span className={`font-bold ${dashboardData.counterStatus.status === 'BUSY' ? 'text-red-500' : 'text-green-500'}`}>{dashboardData.counterStatus.status}</span>
-                        </p>
-                        <p className="text-sm font-bold text-green-600">Queue : <span className="font-bold text-green-600">{dashboardData.counterStatus.queue}</span></p>
-                    </div>
-                </div>
-            </main>
+const Dashboard = () => {
+  return (
+    <div className="p-8 bg-[#F6F6E9] min-h-screen">
+      
+        {/* Search Bar */}
+      <div className="flex justify-end mb-4">
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search queue..."
+            className="pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-500 bg-white" // <-- Add bg-white here
+          />
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
         </div>
-    );
-}
+      </div>
+
+      {/* Top Stat Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* In Progress Card */}
+        <div className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-between">
+          <div className="flex items-center gap-2 text-gray-500">
+            <UserCheck size={20} />
+            <h3 className="text-lg font-medium">In Progress</h3>
+          </div>
+          <p className="text-5xl font-bold text-blue-600 mt-4">A001</p>
+        </div>
+
+        {/* Next in Line Card */}
+        <div className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-between">
+          <div className="flex items-center gap-2 text-gray-500">
+            <Users size={20} />
+            <h3 className="text-lg font-medium">Next in Line</h3>
+          </div>
+          <p className="text-5xl font-bold text-green-600 mt-4">A002</p>
+        </div>
+
+        {/* In Queue Card */}
+        <div className="bg-white p-6 rounded-lg shadow-md flex flex-col justify-between">
+          <div className="flex items-center gap-2 text-gray-500">
+            <Ticket size={20} />
+            <h3 className="text-lg font-medium">In Queue</h3>
+          </div>
+          <p className="text-5xl font-bold text-gray-800 mt-4">4</p>
+        </div>
+      </div>
+
+      {/* Current Status Card */}
+      <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+        <h3 className="text-xl font-bold text-gray-800 mb-4">Current Status for Counter</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <p className="text-sm text-gray-500">Name of Person Being Processed</p>
+            <p className="text-2xl font-semibold text-green-600">John Smith</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Queue No. Being Processed</p>
+            <p className="text-2xl font-semibold text-blue-600">A001</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-500">Next in Line Queue No.</p>
+            <p className="text-2xl font-semibold text-gray-700">A002</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Active Queue List Table */}
+      <div className="bg-white rounded-lg shadow-md mt-6 overflow-x-auto">
+        <h3 className="text-xl font-bold text-gray-800 p-6">Active Queue List</h3>
+        <table className="w-full min-w-max">
+          <thead className="border-b border-gray-200">
+            <tr>
+              <th className="text-left text-sm font-semibold text-gray-600 p-4">Queue No.</th>
+              <th className="text-left text-sm font-semibold text-gray-600 p-4">Name</th>
+              <th className="text-left text-sm font-semibold text-gray-600 p-4">Request</th>
+              <th className="text-left text-sm font-semibold text-gray-600 p-4">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {queueData.map((item, index) => (
+              <tr key={item.queueNo} className="even:bg-yellow-50/50 border-b border-gray-100">
+                <td className="p-4 text-gray-700 font-medium">{item.queueNo}</td>
+                <td className="p-4 text-gray-700">{item.name}</td>
+                <td className="p-4 text-gray-700">{item.request}</td>
+                <td className="p-4">
+                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                    item.status === 'In Progress'
+                      ? 'bg-green-100 text-green-800'
+                      : 'bg-yellow-100 text-yellow-800'
+                  }`}>
+                    {item.status}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

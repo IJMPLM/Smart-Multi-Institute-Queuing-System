@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Jerome/Smart-Multi-Institute-Queuing-System/server/frontend/components/NavBar.tsx"],"sourcesContent":["'use client';\r\nimport Link from \"next/link\";\r\n\r\nexport default function Navbar() {\r\n  return (\r\n    <nav className=\"navbar\">\r\n      <h1 className=\"nav-title\">Server Admin</h1>\r\n\r\n      <div className=\"nav-links\">\r\n        <Link href=\"/dashboard\">🖥️ Dashboard</Link>\r\n        <Link href=\"/system\">📊 System Management</Link>\r\n        <Link href=\"/queue\">👥 Queue Management</Link>\r\n        <Link href=\"/settings\">⚙️ Settings</Link>\r\n      </div>\r\n    </nav>\r\n  );\r\n}\r\n"],"names":[],"mappings":";;;;;AACA;AADA;;;AAGe,SAAS;IACtB,qBACE,wTAAC;QAAI,WAAU;;0BACb,wTAAC;gBAAG,WAAU;0BAAY;;;;;;0BAE1B,wTAAC;gBAAI,WAAU;;kCACb,wTAAC,iPAAI;wBAAC,MAAK;kCAAa;;;;;;kCACxB,wTAAC,iPAAI;wBAAC,MAAK;kCAAU;;;;;;kCACrB,wTAAC,iPAAI;wBAAC,MAAK;kCAAS;;;;;;kCACpB,wTAAC,iPAAI;wBAAC,MAAK;kCAAY;;;;;;;;;;;;;;;;;;AAI/B","debugId":null}}]
+}

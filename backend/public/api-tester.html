@@ -300,6 +300,55 @@
         <div id="qr-response" class="response-box"></div>
       </div>
     </div>
+
+    <div class="grid">
+      <!-- Session & Devices -->
+      <div class="card">
+        <h2>Session & Devices</h2>
+        <p>Check session and device information</p>
+        <button onclick="getSession()">GET /session</button>
+        <button onclick="getDevices()">GET /devices</button>
+        <button onclick="getServerCheck()">GET /server/check</button>
+        <div id="session-loading" class="loading">Loading...</div>
+        <div id="session-response" class="response-box"></div>
+      </div>
+
+      <!-- Counters List -->
+      <div class="card">
+        <h2>Counters</h2>
+        <p>Manage counter operations</p>
+        <button onclick="getCounters()">GET /counters</button>
+        <button onclick="createCounter()">POST /counters (create)</button>
+        <div id="counters-loading" class="loading">Loading...</div>
+        <div id="counters-response" class="response-box"></div>
+      </div>
+
+      <!-- Counter by ID -->
+      <div class="card">
+        <h2>Counter by ID</h2>
+        <p>Get, update, or delete a specific counter</p>
+        <input type="text" id="counter-sessionId" placeholder="Enter session ID">
+        <button onclick="getCounterById()">GET /counters/:id</button>
+        <button onclick="deleteCounterById()">DELETE /counters/:id</button>
+        <div id="counter-id-loading" class="loading">Loading...</div>
+        <div id="counter-id-response" class="response-box"></div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Update Counter -->
+      <div class="card">
+        <h2>Update Counter</h2>
+        <p>Update counter status and properties</p>
+        <input type="text" id="counter-update-sessionId" placeholder="Enter session ID">
+        <textarea id="counter-data" rows="4" placeholder='{"status": "active", "counterId": "counter-123"}'>{
+  "status": "active"
+}</textarea>
+        <button onclick="updateCounter()">PUT /counters/:id</button>
+        <div id="counter-update-loading" class="loading">Loading...</div>
+        <div id="counter-update-response" class="response-box"></div>
+      </div>
+    </div>
   </div>
 
   <script>
@@ -573,6 +622,160 @@
     window.addEventListener('DOMContentLoaded', () => {
       getStats();
     });
+
+    // Session & Devices
+    async function getSession() {
+      setLoading('session-loading', true);
+      try {
+        const response = await fetch(`${API_BASE}/api/session`, {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        displayResponse('session-response', data);
+      } catch (error) {
+        displayResponse('session-response', { error: error.message }, true);
+      }
+      setLoading('session-loading', false);
+    }
+
+    async function getDevices() {
+      setLoading('session-loading', true);
+      try {
+        const response = await fetch(`${API_BASE}/api/devices`, {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        displayResponse('session-response', data);
+      } catch (error) {
+        displayResponse('session-response', { error: error.message }, true);
+      }
+      setLoading('session-loading', false);
+    }
+
+    async function getServerCheck() {
+      setLoading('session-loading', true);
+      try {
+        const response = await fetch(`${API_BASE}/api/server/check`, {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        displayResponse('session-response', data);
+      } catch (error) {
+        displayResponse('session-response', { error: error.message }, true);
+      }
+      setLoading('session-loading', false);
+    }
+
+    // Counters
+    async function getCounters() {
+      setLoading('counters-loading', true);
+      try {
+        const response = await fetch(`${API_BASE}/api/counters`, {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        displayResponse('counters-response', data);
+      } catch (error) {
+        displayResponse('counters-response', { error: error.message }, true);
+      }
+      setLoading('counters-loading', false);
+    }
+
+    async function createCounter() {
+      setLoading('counters-loading', true);
+      try {
+        const response = await fetch(`${API_BASE}/api/counters`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+        displayResponse('counters-response', data);
+      } catch (error) {
+        displayResponse('counters-response', { error: error.message }, true);
+      }
+      setLoading('counters-loading', false);
+    }
+
+    // Counter by ID
+    async function getCounterById() {
+      const sessionId = document.getElementById('counter-sessionId').value.trim();
+      if (!sessionId) {
+        displayResponse('counter-id-response', { error: 'Session ID is required' }, true);
+        return;
+      }
+
+      setLoading('counter-id-loading', true);
+      try {
+        const response = await fetch(`${API_BASE}/api/counters/${sessionId}`, {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        displayResponse('counter-id-response', data);
+      } catch (error) {
+        displayResponse('counter-id-response', { error: error.message }, true);
+      }
+      setLoading('counter-id-loading', false);
+    }
+
+    async function deleteCounterById() {
+      const sessionId = document.getElementById('counter-sessionId').value.trim();
+      if (!sessionId) {
+        displayResponse('counter-id-response', { error: 'Session ID is required' }, true);
+        return;
+      }
+
+      if (!confirm(`Are you sure you want to delete counter with session ID: ${sessionId}?`)) {
+        return;
+      }
+
+      setLoading('counter-id-loading', true);
+      try {
+        const response = await fetch(`${API_BASE}/api/counters/${sessionId}`, {
+          method: 'DELETE',
+          credentials: 'include'
+        });
+        const data = await response.json();
+        displayResponse('counter-id-response', data);
+      } catch (error) {
+        displayResponse('counter-id-response', { error: error.message }, true);
+      }
+      setLoading('counter-id-loading', false);
+    }
+
+    // Update Counter
+    async function updateCounter() {
+      const sessionId = document.getElementById('counter-update-sessionId').value.trim();
+      const counterDataRaw = document.getElementById('counter-data').value.trim();
+
+      if (!sessionId) {
+        displayResponse('counter-update-response', { error: 'Session ID is required' }, true);
+        return;
+      }
+
+      let counterData;
+      try {
+        counterData = JSON.parse(counterDataRaw);
+      } catch (e) {
+        displayResponse('counter-update-response', { error: 'Invalid JSON in Counter Data field: ' + e.message }, true);
+        return;
+      }
+
+      setLoading('counter-update-loading', true);
+      try {
+        const response = await fetch(`${API_BASE}/api/counters/${sessionId}`, {
+          method: 'PUT',
+          credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ counter: counterData })
+        });
+        const data = await response.json();
+        displayResponse('counter-update-response', data);
+      } catch (error) {
+        displayResponse('counter-update-response', { error: error.message }, true);
+      }
+      setLoading('counter-update-loading', false);
+    }
   </script>
 </body>
 </html>

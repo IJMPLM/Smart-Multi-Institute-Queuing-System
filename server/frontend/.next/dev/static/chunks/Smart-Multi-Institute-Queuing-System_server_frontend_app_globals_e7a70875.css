@@ -1,0 +1,190 @@
+/* [project]/Smart-Multi-Institute-Queuing-System/server/frontend/app/globals.css [app-client] (css) */
+.inline {
+  display: inline;
+}
+
+.min-h-screen {
+  min-height: 100vh;
+}
+
+.bg-\[\#f9f9f4\] {
+  background-color: #f9f9f4;
+}
+
+.align-middle {
+  vertical-align: middle;
+}
+
+body {
+  background-color: #f9f9e6;
+  margin: 0;
+  padding: 0;
+  font-family: Arimo;
+}
+
+.nav-title {
+  color: #fff;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 24px;
+}
+
+.navbar {
+  color: #fff;
+  background-color: #0b2347;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 15px;
+  display: flex;
+  box-shadow: 0 2px 4px #0000001a;
+}
+
+.nav-title img {
+  object-fit: contain;
+  width: 40px;
+  height: 15px;
+}
+
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  transition: color .2s ease-in-out;
+}
+
+.nav-links a:not(.active):hover {
+  color: gold;
+}
+
+.nav-link.active {
+  color: #0b2347;
+  background-color: gold;
+  border-radius: 9px;
+  padding: 8px;
+}
+
+.nav-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.summary-bar {
+  background-color: #fff;
+  border-radius: 12px;
+  justify-content: space-between;
+  margin-top: 24px;
+  margin-left: 150px;
+  margin-right: 150px;
+  padding: 16px;
+  display: flex;
+  box-shadow: 0 2px 6px #00000014;
+}
+
+.summary-item {
+  text-align: left;
+  flex-direction: column;
+  display: flex;
+}
+
+.summary-label {
+  color: #6b7280;
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.summary-value {
+  color: #111827;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.dashboard-title {
+  color: #374151;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.dashboard-subtitle {
+  color: #6b7280;
+  margin: 2px 0 0;
+  font-size: 12px;
+}
+
+.dashboard-value {
+  color: #111827;
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.dashboard-container {
+  flex-direction: column;
+  gap: 24px;
+  display: flex;
+}
+
+.dashboard-card-row {
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 50px;
+  display: flex;
+}
+
+.dashboard-icon {
+  object-fit: contain;
+  width: 16px;
+  height: 16px;
+}
+
+.center-container {
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  display: flex;
+}
+
+.dashboard-card {
+  background-color: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  width: 16rem;
+  padding: 1rem;
+  box-shadow: 0 4px 6px #0000001a;
+}
+
+.card-header {
+  color: #4b5563;
+  align-items: center;
+  gap: .5rem;
+  margin-bottom: .25rem;
+  display: flex;
+}
+
+.card-title {
+  font-size: .875rem;
+  font-weight: 500;
+}
+
+.card-subtitle {
+  color: #6b7280;
+  font-size: .75rem;
+}
+
+.card-value {
+  margin-top: .5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.nav-link-icon {
+  vertical-align: middle;
+  width: 20px;
+  height: 20px;
+  margin-right: 2px;
+  display: inline;
+}
+
+/*# sourceMappingURL=Smart-Multi-Institute-Queuing-System_server_frontend_app_globals_e7a70875.css.map*/

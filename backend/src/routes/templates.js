@@ -101,4 +101,14 @@ router.get('/form-input', (req, res) => {
   }
 });
 
+// Requirements endpoint
+router.get('/requirements', (req, res) => {
+  const data = readTemplate('requirements.json');
+  if (data) {
+    res.json(data);
+  } else {
+    res.status(500).json({ error: 'Failed to load requirements data' });
+  }
+});
+
 export default router;

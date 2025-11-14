@@ -1,0 +1,32 @@
+{
+  "Passport Application Form": {
+    "form": "Passport Application Form",
+    "requirements": [
+      "High School Diploma",
+      "Certificate of Good Moral Character",
+      "Birth Certificate (PSA)",
+      "2x2 ID Picture (2 copies)",
+      "Medical Clearance",
+      "Entrance Exam Result"
+    ]
+  },
+  "Passport Record Certification Request Form": {
+    "form": "Passport Record Certification Request Form",
+    "requirements": [
+      "Valid ID",
+      "Passport Number (if applicable)",
+      "Authorization Letter (if claiming on behalf)",
+      "Payment Receipt"
+    ]
+  },
+  "Clearance": {
+    "form": "Clearance",
+    "requirements": [
+      "Student ID",
+      "Clearance Form",
+      "No Pending Balance Certificate",
+      "Library Clearance",
+      "Laboratory Clearance"
+    ]
+  }
+}

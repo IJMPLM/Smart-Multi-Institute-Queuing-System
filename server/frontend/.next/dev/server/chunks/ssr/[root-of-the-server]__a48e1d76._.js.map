@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Jerome/Smart-Multi-Institute-Queuing-System/server/frontend/app/dashboard/page.tsx"],"sourcesContent":["import type { Metadata } from \"next\";\nimport \"./globals.css\";\n\nexport const metadata: Metadata = {\n  title: \"Smart Multi-Institute Queuing System\",\n  description: \"Dashboard and queue management for multiple institutes.\",\n};\n\nexport default function RootLayout({\n  children,\n}: {\n  children: React.ReactNode;\n}) {\n  return (\n    <html lang=\"en\">\n      <body className=\"bg-gray-50 text-gray-900\">\n        {children}\n      </body>\n    </html>\n  );\n}\n"],"names":[],"mappings":";;;;;;;;;;;;;;AAGO,MAAM,WAAqB;IAChC,OAAO;IACP,aAAa;AACf;AAEe,SAAS,WAAW,EACjC,QAAQ,EAGT;IACC,qBACE,wTAAC;QAAK,MAAK;kBACT,cAAA,wTAAC;YAAK,WAAU;sBACb;;;;;;;;;;;AAIT","debugId":null}}]
+}

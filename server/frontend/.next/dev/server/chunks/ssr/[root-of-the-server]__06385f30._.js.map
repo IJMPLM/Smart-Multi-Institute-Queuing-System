@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 18, "column": 0}, "map": {"version":3,"sources":["file:///C:/Users/Jerome/Smart-Multi-Institute-Queuing-System/server/frontend/app/queue/page.tsx"],"sourcesContent":["// Queue Management - Jana \r\n\r\nimport React from \"react\";\r\n\r\nexport default function QueuePage() {\r\n  return (\r\n    <div className=\"flex justify-center items-center min-h-screen bg-gray-50\">\r\n      <div className=\"text-center\">\r\n        <h1 className=\"text-3xl font-bold mb-2\">Queue Management</h1>\r\n        <p className=\"text-gray-600\">Monitor and manage queues efficiently.</p>\r\n      </div>\r\n    </div>\r\n  );\r\n}\r\n"],"names":[],"mappings":"AAAA,2BAA2B;;;;;;;AAIZ,SAAS;IACtB,qBACE,wTAAC;QAAI,WAAU;kBACb,cAAA,wTAAC;YAAI,WAAU;;8BACb,wTAAC;oBAAG,WAAU;8BAA0B;;;;;;8BACxC,wTAAC;oBAAE,WAAU;8BAAgB;;;;;;;;;;;;;;;;;AAIrC","debugId":null}}]
+}
