@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { QueueManager } from "./queue.controller.js";
-import { deleteSession } from "../db/sessions.js";
+import { deleteSession, fetchSessions, storeSession } from "../db/sessions.js";
 
 export async function getApplicantInfo(req: Request, res: Response): Promise<void> {
   try {
@@ -158,16 +158,10 @@ export async function markApplicantClosed(req: Request, res: Response): Promise<
   try {
     const { sessionId } = req.body;
 
-    if (sessionId && sessionId !== req.sessionID) {
-      res.status(501).json({
-        success: false,
-        error: "Marking other sessions as closed requires database implementation",
-        message: "Please use the applicant's own session to mark as closed",
-      });
-      return;
-    }
-
-    if (!req.session.applicant) {
+    const sessions = fetchSessions();
+    const targetSessionId = sessionId || req.sessionID;
+    const targetSession = sessions.get(targetSessionId);
+    if (!targetSession || !targetSession.applicant) {
       res.status(404).json({
         success: false,
         error: "No applicant information found",
@@ -175,22 +169,19 @@ export async function markApplicantClosed(req: Request, res: Response): Promise<
       return;
     }
 
-    req.session.applicant.dateClosed = new Date().toISOString();
-    req.session.save(async (err) => {
-      if (err) {
-        res.status(500).json({ error: "Failed to save session", message: err.message });
-        return;
-      }
-      // After closing applicant, check if counter can be deleted
-      const counterSessionId = req.session.counter?.key ? Array.from((await import("../db/sessions.js")).fetchSessions().entries()).find(([id, s]) => s.counter?.key === req.session.counter?.key)?.[0] : undefined;
-      if (counterSessionId && QueueManager.canDeleteCounterSession(counterSessionId)) {
-        deleteSession(counterSessionId);
-      }
-      res.json({
-        success: true,
-        message: "Applicant marked as served",
-        data: req.session.applicant,
-      });
+    targetSession.applicant.dateClosed = new Date().toISOString();
+    // Save session (simulate save for DB-backed sessions)
+    sessions.set(targetSessionId, targetSession);
+    storeSession(sessionId, targetSession)
+    const counterKey = targetSession.counter?.key;
+    const counterSessionId = counterKey ? Array.from(sessions.entries()).find(([id, s]) => s.counter?.key === counterKey)?.[0] : undefined;
+    if (counterSessionId && QueueManager.canDeleteCounterSession(counterSessionId)) {
+      deleteSession(counterSessionId);
+    }
+    res.json({
+      success: true,
+      message: "Applicant marked as served",
+      data: targetSession.applicant,
     });
   } catch (error) {
     res.status(500).json({
@@ -203,16 +194,10 @@ export async function markApplicantProcessing(req: Request, res: Response): Prom
   try {
     const { sessionId } = req.body;
 
-    if (sessionId && sessionId !== req.sessionID) {
-      res.status(501).json({
-        success: false,
-        error: "Marking other sessions as processing requires database implementation",
-        message: "Please use the applicant's own session to mark as processing",
-      });
-      return;
-    }
-
-    if (!req.session.applicant) {
+    const sessions = fetchSessions();
+    const targetSessionId = sessionId || req.sessionID;
+    const targetSession = sessions.get(targetSessionId);
+    if (!targetSession || !targetSession.applicant) {
       res.status(404).json({
         success: false,
         error: "No applicant information found",
@@ -220,23 +205,13 @@ export async function markApplicantProcessing(req: Request, res: Response): Prom
       return;
     }
 
-    req.session.applicant.dateProcessing = new Date().toISOString();
-
-    req.session.save((err) => {
-      if (err) {
-        res.status(500).json({
-          success: false,
-          error: "Failed to mark as processing",
-          message: err.message,
-        });
-        return;
-      }
-
-      res.json({
-        success: true,
-        message: "Applicant marked as processing",
-        data: req.session.applicant,
-      });
+    targetSession.applicant.dateProcessing = new Date().toISOString();
+    sessions.set(targetSessionId, targetSession);
+    storeSession(sessionId, targetSession)
+    res.json({
+      success: true,
+      message: "Applicant marked as processing",
+      data: targetSession.applicant,
     });
   } catch (error) {
     res.status(500).json({
@@ -250,16 +225,11 @@ export async function markApplicantMissing(req: Request, res: Response): Promise
   try {
     const { sessionId } = req.body;
 
-    if (sessionId && sessionId !== req.sessionID) {
-      res.status(501).json({
-        success: false,
-        error: "Marking other sessions as missing requires database implementation",
-        message: "Please use the applicant's own session to mark as missing",
-      });
-      return;
-    }
-
-    if (!req.session.applicant) {
+    
+    const sessions = fetchSessions();
+    const targetSessionId = sessionId || req.sessionID;
+    const targetSession = sessions.get(targetSessionId);
+    if (!targetSession || !targetSession.applicant) {
       res.status(404).json({
         success: false,
         error: "No applicant information found",
@@ -267,49 +237,26 @@ export async function markApplicantMissing(req: Request, res: Response): Promise
       return;
     }
 
-    const missingCount = (req.session.applicant.missingCount || 0) + 1;
-    req.session.applicant.missingCount = missingCount;
-    
+    const missingCount = (targetSession.applicant.missingCount || 0) + 1;
+    targetSession.applicant.missingCount = missingCount;
     if (missingCount >= 3) {
-      req.session.applicant.dateClosed = new Date().toISOString();
-      
-      req.session.save((err) => {
-        if (err) {
-          res.status(500).json({
-            success: false,
-            error: "Failed to close applicant",
-            message: err.message,
-          });
-          return;
-        }
-
-        res.json({
-          success: true,
-          message: "Applicant marked missing 3 times and removed from queue",
-          data: req.session.applicant,
-        });
+      targetSession.applicant.dateClosed = new Date().toISOString();
+      sessions.set(targetSessionId, targetSession);
+      res.json({
+        success: true,
+        message: "Applicant marked missing 3 times and removed from queue",
+        data: targetSession.applicant,
       });
       return;
     }
-    
-    req.session.applicant.isPriority = false;
-    req.session.applicant.dateSubmitted = new Date().toISOString();
-
-    req.session.save((err) => {
-      if (err) {
-        res.status(500).json({
-          success: false,
-          error: "Failed to mark as missing",
-          message: err.message,
-        });
-        return;
-      }
-
-      res.json({
-        success: true,
-        message: `Applicant marked as missing (${missingCount}/3) and moved to back of queue`,
-        data: req.session.applicant,
-      });
+    targetSession.applicant.isPriority = false;
+    targetSession.applicant.dateSubmitted = new Date().toISOString();
+    sessions.set(targetSessionId, targetSession);
+    storeSession(sessionId, targetSession)
+    res.json({
+      success: true,
+      message: `Applicant marked as missing (${missingCount}/3) and moved to back of queue`,
+      data: targetSession.applicant,
     });
   } catch (error) {
     res.status(500).json({
