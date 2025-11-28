@@ -21,6 +21,11 @@ interface QueueApplicant {
   dateClosed?: string;
   dateProcessing?: string;
 }
+type QueueDistribution = {
+  counterId: string,
+  counterName: string,
+  applicants: QueueApplicant[]
+}
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const API_BASE = `${BASE_URL}/api/`;
@@ -53,19 +58,17 @@ const Applicant = () => {
 
         // Find current counter's queue using currentCounterId
         const counterQueue = result.data.queueDistribution.find(
-          (q: any) => q.counterId === result.data.currentCounterId
-        );
+          (q: QueueDistribution) => q.counterId === result.data.currentCounterId
+        ) as QueueDistribution;
 
-        if (counterQueue && counterQueue.applicants.length > 0) {
-          // Find the applicant currently being processed
-          const processing = counterQueue.applicants[0];
-
-          // Find waiting applicants (not processing, not closed)
-          const waiting = counterQueue.applicants[1];
+        const applicants = counterQueue.applicants.filter(a => a.dateClosed == undefined)
+        if (counterQueue && applicants.length > 0) {
+          const processing = applicants[0];
+          const waiting = applicants[1];
 
           setInProgressApplicant(processing || null);
-          setNextInLine(waiting[0] || null);
-          setInQueueCount(waiting.length);
+          setNextInLine(waiting || null);
+          setInQueueCount(counterQueue.applicants.length - 1);
         } else {
           setInProgressApplicant(null);
           setNextInLine(null);
