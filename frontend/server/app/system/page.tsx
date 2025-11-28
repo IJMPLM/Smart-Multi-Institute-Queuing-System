@@ -17,12 +17,8 @@ interface Session {
   endedAt: string;
   sessionId: string;
 }
-<<<<<<< HEAD
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const API_BASE = `${BASE_URL}/api/`;
-=======
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
->>>>>>> upstream/main
 export default function SystemPage() {
   const [activeTab, setActiveTab] = useState("devices");
   const [devices, setDevices] = useState<Device[]>([]);

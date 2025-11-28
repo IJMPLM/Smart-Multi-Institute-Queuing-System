@@ -3,12 +3,8 @@
 import React from "react";
 import { Power } from "lucide-react";
 
-<<<<<<< HEAD
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const API_BASE = `${BASE_URL}/api/`;
-=======
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
->>>>>>> upstream/main
 export default function SettingsPage() {
   const handleShutdown = async () => {
     if (

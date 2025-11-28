@@ -10,13 +10,9 @@ interface HeaderProps {
   onViewChange: (view: View) => void;
   onLogout: () => void;
 }
-<<<<<<< HEAD
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const API_BASE = `${BASE_URL}/api/`;
-=======
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
->>>>>>> upstream/main
 
 const Header: React.FC<HeaderProps> = ({
   currentView,
@@ -39,7 +35,7 @@ const Header: React.FC<HeaderProps> = ({
 
     try {
       // Try to close the counter session first
-      const closeRes = await fetch(`${BASE_URL}counter/close`, {
+      const closeRes = await fetch(`${API_BASE}counter/close`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -51,7 +47,7 @@ const Header: React.FC<HeaderProps> = ({
       if (closeRes.ok) {
         if (closeData.canClose) {
           // No applicants, proceed with logout
-          const response = await fetch(`${BASE_URL}counter/logout`, {
+          const response = await fetch(`${API_BASE}counter/logout`, {
             method: "POST",
             credentials: "include",
           });

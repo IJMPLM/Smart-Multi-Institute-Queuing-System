@@ -31,18 +31,14 @@ export default function DashboardPage() {
     totalUptime: 0,
   });
   const [qrData, setQrData] = useState<{ [key: string]: string }>({});
-<<<<<<< HEAD
 
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-  const API_BASE = `${BASE_URL}/api`;
-=======
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
->>>>>>> upstream/main
+  const API_BASE = `${BASE_URL}/api/`;
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {// Current Queue Status
-        const sessionRes = await fetch(`${BASE_URL}/server/dashboard/queue`, {
+        const sessionRes = await fetch(`${API_BASE}server/dashboard/queue`, {
           credentials: 'include'
         });
         const sessionText = await sessionRes.text();
@@ -53,7 +49,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
         });
 
         // Active users
-        const devicesRes = await fetch(`${BASE_URL}server/dashboard/users`, {
+        const devicesRes = await fetch(`${API_BASE}server/dashboard/users`, {
           credentials: 'include'
         });
         const devicesText = await devicesRes.text();
@@ -61,7 +57,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
         setActiveUsers(devicesData);
 
         // Connected devices
-        const connectedRes = await fetch(`${BASE_URL}session/all`, {
+        const connectedRes = await fetch(`${API_BASE}session/all`, {
           credentials: 'include'
         });
         const connectedText = await connectedRes.text();
@@ -69,7 +65,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
         setConnectedDevices(Object.keys(connectedData).length);
 
         // Active counters
-        const countersRes = await fetch(`${BASE_URL}server/counters`, {
+        const countersRes = await fetch(`${API_BASE}server/counters`, {
           credentials: 'include'
         });
         const countersText = await countersRes.text();
@@ -81,13 +77,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
         );
 
         // Summary Table
-<<<<<<< HEAD
-        const summaryRes = await fetch(`${API_BASE}/server/dashboard/summary`, {
+        const summaryRes = await fetch(`${API_BASE}server/dashboard/summary`, {
           credentials: "include",
-=======
-        const summaryRes = await fetch(`${BASE_URL}server/dashboard/summary`, {
-          credentials: 'include'
->>>>>>> upstream/main
         });
         const summaryText = await summaryRes.text();
         const summaryData = summaryText ? JSON.parse(summaryText) : {};
@@ -98,13 +89,8 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
         });
 
         // Fetch QR codes
-<<<<<<< HEAD
-        const qrRes = await fetch(`${API_BASE}/server/qr`, {
+        const qrRes = await fetch(`${API_BASE}server/qr`, {
           credentials: "include",
-=======
-        const qrRes = await fetch(`${BASE_URL}server/qr`, {
-          credentials: 'include'
->>>>>>> upstream/main
         });
         const qrText = await qrRes.text();
         const qrObj = qrText ? JSON.parse(qrText) : {};

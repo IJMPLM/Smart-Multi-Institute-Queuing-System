@@ -6,13 +6,9 @@ import { KeyRound } from "lucide-react";
 interface LoginPageProps {
   onLogin: (key: string) => void;
 }
-<<<<<<< HEAD
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const API_BASE = `${BASE_URL}/api/`;
-=======
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
->>>>>>> upstream/main
 
 const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const [sessionKey, setSessionKey] = useState("");
