@@ -33,11 +33,14 @@ interface QueueStatusResponse {
   success: boolean;
   data: {
     applicants: Record<string, string>;
-    activeCounters: Record<string, {
-      counterName: string;
-      dateOpened: string;
-      queueLength: number;
-    }>;
+    activeCounters: Record<
+      string,
+      {
+        counterName: string;
+        dateOpened: string;
+        queueLength: number;
+      }
+    >;
     queueDistribution: QueueCounter[];
     statistics: {
       totalActiveCounters: number;
@@ -47,29 +50,34 @@ interface QueueStatusResponse {
     };
   };
 }
+<<<<<<< HEAD
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+const API_BASE = `${BASE_URL}/api/`;
+=======
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || `http://localhost:4000/api/`
+>>>>>>> upstream/main
 
 export default function QueuePage() {
   const [queueData, setQueueData] = useState<QueueItem[]>([]);
-  const [activeTab, setActiveTab] = useState('All');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState("All");
+  const [searchTerm, setSearchTerm] = useState("");
 
-  const filters = ['All',  'In Line', 'Processing','Closed'];
+  const filters = ["All", "In Line", "Processing", "Closed"];
 
   // Fetch queue data from API
   useEffect(() => {
     const fetchQueueData = async () => {
       try {
-        const response = await fetch(`${BASE_URL}queue/status`, {
-          credentials: 'include'
+        const response = await fetch(`${API_BASE}queue/status`, {
+          credentials: "include",
         });
         if (response.ok) {
           const result: QueueStatusResponse = await response.json();
-          
+
           if (result.success && result.data) {
             // Parse queueDistribution to create QueueItem array
             const parsedData: QueueItem[] = [];
-            
+
             result.data.queueDistribution.forEach((counter, index) => {
               counter.applicants.forEach((applicant) => {
                 const status = applicant.dateClosed
@@ -77,18 +85,18 @@ export default function QueuePage() {
                   : applicant.dateProcessing
                   ? "Processing"
                   : "In Line";
-                
+
                 parsedData.push({
                   id: applicant.position,
                   name: applicant.name,
                   request: applicant.document,
                   counter: `Counter ${index + 1}`,
                   status: status,
-                  isPriority: applicant.isPriority
+                  isPriority: applicant.isPriority,
                 });
               });
             });
-            
+
             setQueueData(parsedData);
           } else {
             setQueueData([]);
@@ -102,48 +110,47 @@ export default function QueuePage() {
     };
 
     fetchQueueData();
-    
+
     // Refresh every 5 seconds
     const interval = setInterval(fetchQueueData, 5000);
     return () => clearInterval(interval);
   }, []);
-  
-  const filteredData = queueData.filter(item => {
-    const matchesStatus = activeTab === 'All' || item.status === activeTab;
-    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          item.request.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          item.counter.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          String(item.id).includes(searchTerm);
+
+  const filteredData = queueData.filter((item) => {
+    const matchesStatus = activeTab === "All" || item.status === activeTab;
+    const matchesSearch =
+      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.request.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.counter.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      String(item.id).includes(searchTerm);
     return matchesStatus && matchesSearch;
   });
 
   const QueueStatusBadge = ({ status }: { status: string }) => {
     return (
-      <span className={`queue-status-badge status-${status.toLowerCase().split(" ").join("-")}`}>
+      <span
+        className={`queue-status-badge status-${status
+          .toLowerCase()
+          .split(" ")
+          .join("-")}`}
+      >
         {status}
       </span>
     );
   };
 
   return (
-    
     <main className="system-page-container">
       <h1 className="page-title">Queue Management</h1>
-      <p className="page-subtitle">
-        Monitor and manage the queue system
-      </p>
+      <p className="page-subtitle">Monitor and manage the queue system</p>
 
-      {
-
-      }
-      <div className="system-content-card" style={{ marginTop: '24px' }}>
+      {}
+      <div className="system-content-card" style={{ marginTop: "24px" }}>
         <div className="system-card-header queue-card-header">
           <div>
             <h2 className="system-card-title">Active Queue</h2>
           </div>
-          {
-
-          }
+          {}
           <div className="queue-controls">
             {/* Search Bar */}
             <div className="queue-search-wrapper">
@@ -156,14 +163,16 @@ export default function QueuePage() {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            
+
             {/* Tabs */}
             <div className="tabs-container" style={{ margin: 0 }}>
-              {filters.map(filter => (
+              {filters.map((filter) => (
                 <button
                   key={filter}
                   onClick={() => setActiveTab(filter)}
-                  className={`tab-button ${activeTab === filter ? 'active' : ''}`}
+                  className={`tab-button ${
+                    activeTab === filter ? "active" : ""
+                  }`}
                 >
                   {filter}
                 </button>
@@ -172,9 +181,7 @@ export default function QueuePage() {
           </div>
         </div>
 
-        {
-
-        }
+        {}
         <div className="table-wrapper">
           <table className="devices-table">
             <thead>
@@ -192,7 +199,17 @@ export default function QueuePage() {
                   <td>
                     {item.id}
                     {item.isPriority && (
-                      <span className="priority-badge" style={{ marginLeft: '8px', fontSize: '0.75rem', padding: '2px 6px', backgroundColor: '#fef3c7', color: '#92400e', borderRadius: '4px' }}>
+                      <span
+                        className="priority-badge"
+                        style={{
+                          marginLeft: "8px",
+                          fontSize: "0.75rem",
+                          padding: "2px 6px",
+                          backgroundColor: "#fef3c7",
+                          color: "#92400e",
+                          borderRadius: "4px",
+                        }}
+                      >
                         Priority
                       </span>
                     )}
@@ -212,4 +229,3 @@ export default function QueuePage() {
     </main>
   );
 }
-
