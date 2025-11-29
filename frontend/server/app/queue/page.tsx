@@ -1,6 +1,7 @@
 // Queue Management - @FE - Jana
 "use client";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Search } from "lucide-react";
 
 interface Applicant {
@@ -60,8 +61,23 @@ export default function QueuePage() {
 
   const filters = ["All", "In Line", "Processing", "Closed"];
 
-  // Fetch queue data from API
+  const router = useRouter();
+  // Server check logic
   useEffect(() => {
+    const checkServer = async () => {
+      try {
+        const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+        const response = await fetch(`${BASE_URL}/api/server/check`, { credentials: "include" });
+        const data = await response.json();
+        if (!data.isServer) {
+          router.replace("/unauthorized");
+        }
+      } catch {
+        router.replace("/unauthorized");
+      }
+    };
+    checkServer();
+    // Fetch queue data from API
     const fetchQueueData = async () => {
       try {
         const response = await fetch(`${API_BASE}queue/status`, {
@@ -69,11 +85,9 @@ export default function QueuePage() {
         });
         if (response.ok) {
           const result: QueueStatusResponse = await response.json();
-
           if (result.success && result.data) {
             // Parse queueDistribution to create QueueItem array
             const parsedData: QueueItem[] = [];
-
             result.data.queueDistribution.forEach((counter, index) => {
               counter.applicants.forEach((applicant) => {
                 const status = applicant.dateClosed
@@ -81,7 +95,6 @@ export default function QueuePage() {
                   : applicant.dateProcessing
                   ? "Processing"
                   : "In Line";
-
                 parsedData.push({
                   id: applicant.position,
                   name: applicant.name,
@@ -92,7 +105,6 @@ export default function QueuePage() {
                 });
               });
             });
-
             setQueueData(parsedData);
           } else {
             setQueueData([]);
@@ -104,9 +116,7 @@ export default function QueuePage() {
         setQueueData([]);
       }
     };
-
     fetchQueueData();
-
     // Refresh every 5 seconds
     const interval = setInterval(fetchQueueData, 5000);
     return () => clearInterval(interval);

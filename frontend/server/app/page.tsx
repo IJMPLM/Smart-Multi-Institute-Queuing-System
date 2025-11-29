@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import DashboardCard from "@/components/DashboardCard";
 import "../styles/globals.css";
 import { QrCode } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface SessionData {
   usersInQueue: number;
@@ -35,7 +36,24 @@ export default function DashboardPage() {
   const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
   const API_BASE = `${BASE_URL}/api/`;
 
+  const router = useRouter();
+
   useEffect(() => {
+    // Server check logic
+    const checkServer = async () => {
+      try {
+        const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
+        const response = await fetch(`${BASE_URL}/api/server/check`, { credentials: "include" });
+        const data = await response.json();
+        if (!data.isServer) {
+          router.replace("/unauthorized");
+        }
+      } catch {
+        router.replace("/unauthorized");
+      }
+    };
+    checkServer();
+    // ...existing code...
     const fetchDashboardData = async () => {
       try {// Current Queue Status
         const sessionRes = await fetch(`${API_BASE}server/dashboard/queue`, {

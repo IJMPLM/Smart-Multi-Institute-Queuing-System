@@ -1,10 +1,25 @@
 // Settings - @FE - Jana
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Power } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const API_BASE = `${BASE_URL}/api/`;
+  const router = useRouter();
+  useEffect(() => {
+    const checkServer = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/api/server/check`, { credentials: "include" });
+        const data = await response.json();
+        if (!data.isServer) {
+          router.replace("/unauthorized");
+        }
+      } catch {
+        router.replace("/unauthorized");
+      }
+    };
+    checkServer();
+  }, [router]);
 export default function SettingsPage() {
   const handleShutdown = async () => {
     if (

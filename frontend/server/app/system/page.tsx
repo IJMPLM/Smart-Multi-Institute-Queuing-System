@@ -19,12 +19,28 @@ interface Session {
 }
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
 const API_BASE = `${BASE_URL}/api/`;
+import { useRouter } from "next/navigation";
 export default function SystemPage() {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState("devices");
   const [devices, setDevices] = useState<Device[]>([]);
   const [counters, setCounters] = useState<Session[]>([]);
   const [sessionId, setSessionId] = useState("");
   const [result, setResult] = useState("");
+  useEffect(() => {
+    const checkServer = async () => {
+      try {
+        const response = await fetch(`${BASE_URL}/api/server/check`, { credentials: "include" });
+        const data = await response.json();
+        if (!data.isServer) {
+          router.replace("/unauthorized");
+        }
+      } catch {
+        router.replace("/unauthorized");
+      }
+    };
+    checkServer();
+  }, [router]);
 
   const handleDisconnect = async (deviceId: string) => {
     if (!confirm("Are you sure you want to disconnect this device?")) {
