@@ -1,25 +1,11 @@
 import QRCode from 'qrcode';
 import { Request, Response } from 'express';
-import os from 'os';
 
-function getServerIP(): string {
-  const interfaces = os.networkInterfaces();
-  for (const name of Object.keys(interfaces)) {
-    const iface = interfaces[name];
-    if (iface) {
-      for (const alias of iface) {
-        if (alias.family === 'IPv4' && !alias.internal) {
-          return alias.address;
-        }
-      }
-    }
-  }
-  return 'localhost';
-}
+const IP = '172.20.31.62'
 
 export async function getQR(req: Request, res: Response) {
   try {
-    const serverIP = getServerIP();
+    const serverIP = IP;
     const protocol = req.protocol;
     
     // Generate QR codes for both ports

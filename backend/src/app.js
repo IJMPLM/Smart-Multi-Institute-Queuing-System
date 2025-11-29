@@ -17,7 +17,7 @@ const allowedOrigins = [
   `${process.env.NEXT_PUBLIC_API_URL}:3000`,
   `${process.env.NEXT_PUBLIC_API_URL}:3001`,
   `${process.env.NEXT_PUBLIC_API_URL}:3002`,
-  `http://192.168.1.6:4000`,
+  `http://172.20.31.62:4000`,
   `http://localhost:4000`,
   `http://localhost:3000`,
   `http://localhost:3001`,
