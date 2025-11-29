@@ -54,6 +54,7 @@ export async function getApplicantInfo(req: Request, res: Response): Promise<voi
   }
 }
 export async function submitApplicantForm(req: Request, res: Response): Promise<void> {
+  console.warn(1)
   try {
     const { name, document, isPriority } = req.body;
 
@@ -62,6 +63,8 @@ export async function submitApplicantForm(req: Request, res: Response): Promise<
         success: false,
         error: "Name and document are required",
       });
+      
+  console.warn(2)
       return;
     }
 
@@ -84,9 +87,13 @@ export async function submitApplicantForm(req: Request, res: Response): Promise<
           error: "Failed to save form submission",
           message: err.message,
         });
+        
+  console.warn(3)
         return;
       }
 
+      
+  console.warn(4)
       res.json({
         success: true,
         message: "Form submitted successfully",
