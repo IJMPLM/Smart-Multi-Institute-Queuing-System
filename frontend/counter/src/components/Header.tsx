@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useRouter } from "next/navigation";
 import { LayoutDashboard, User, LogOut } from "lucide-react";
 
 type View = "dashboard" | "applicant";
@@ -24,6 +25,7 @@ const Header: React.FC<HeaderProps> = ({
   const inactiveClass =
     "flex items-center gap-2 text-white font-semibold px-4 py-2 rounded-md hover:bg-yellow-300 hover:text-black transition-colors";
 
+  const router = useRouter();
   const handleLogout = async () => {
     if (
       !confirm(
@@ -46,17 +48,8 @@ const Header: React.FC<HeaderProps> = ({
       const closeData = await closeRes.json();
       if (closeRes.ok) {
         if (closeData.canClose) {
-          // No applicants, proceed with logout
-          const response = await fetch(`${API_BASE}counter/logout`, {
-            method: "POST",
-            credentials: "include",
-          });
-          if (response.ok) {
             onLogout();
-          } else {
-            const error = await response.json();
-            alert(`Logout failed: ${error.message || "Unknown error"}`);
-          }
+            router.replace("/");
         } else {
           alert(
             "Counter is closing, but there are still applicants in queue. Please serve all applicants before logging out."

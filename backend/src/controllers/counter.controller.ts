@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import { fetchSessions, storeSession } from "../db/sessions.js";
 import { addAvailableKey, getAvailableKeys, getUsedKeys, isKeyAvailable, useKey } from "../utils/counterKeys.js";
+import { QueueManager } from "./queue.controller.js";
+import session from "express-session";
+import { countReset } from "console";
 
 export async function generateKeysHandler(req: Request, res: Response): Promise<void> {
   try {
@@ -58,27 +61,15 @@ export async function closeCounter(req: Request, res: Response): Promise<void> {
       return;
     }
 
-    if (counterSession.counter.dateClosed) {
-      res.status(400).json({
-        success: false,
-        error: "Counter is already closed",
-        message: "This counter has already been closed",
-      });
-      console.warn("Counter is already closed")
-      return;
-    }
 
-    let hasActiveApplicants = false;
-
-    sessions.forEach((session, sid) => {
-      if (session.applicant && 
-          session.applicant.dateSubmitted && 
-          !session.applicant.dateClosed &&
-          session.counter?.key === counterSession.counter?.key) {
-        hasActiveApplicants = true;
-      }
-    });
-
+    const queueMangemenet = QueueManager.manageQueue()
+    const counterQueue =
+          queueMangemenet.queueDistribution.find(
+            (q) =>
+              q.counterId === sessionId
+          ) || null;
+    const applicants = counterQueue?.applicants.filter(a => a.dateClosed == undefined)
+    const hasActiveApplicants = (applicants?.length ?? 0) > 0;
     counterSession.counter.dateClosed = new Date().toISOString();
   
     storeSession(sessionId, counterSession);
@@ -102,7 +93,7 @@ export async function closeCounter(req: Request, res: Response): Promise<void> {
     res.status(500).json({
       success: false,
       error: "Failed to close counter",
-      message: error instanceof Error ? error.message : "Unknown error",
+      message: error instanceof Error ? error.message : "Failed to close the counter",
     });
   }
 }
