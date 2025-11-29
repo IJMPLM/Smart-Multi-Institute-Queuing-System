@@ -145,7 +145,6 @@ export async function getCounters(req: Request, res: Response): Promise<void> {
   try {
     const sessions = fetchSessionsAll();
 
-    // First, collect all counter sessions with their timestamps
     const counterSessions: Array<{
       sessionId: string;
       session: any;
