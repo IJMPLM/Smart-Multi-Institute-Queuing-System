@@ -80,6 +80,7 @@ export default function SystemPage() {
 
       if (response.ok) {
         const result = await response.json();
+        fetchSessions();
       } else {
         alert("Failed to generate counter key");
       }
@@ -126,43 +127,43 @@ export default function SystemPage() {
   };
 
   // Fetch devices data from API
-  useEffect(() => {
-    const fetchDevices = async () => {
-      try {
-        const response = await fetch(`${API_BASE}server/devices`, {
-          credentials: "include",
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setDevices(data);
-        } else {
-          console.log("Failed to fetch devices from /api/server/devices");
-          setDevices([]);
-        }
-      } catch (error) {
-        console.log("Failed to fetch devices:", error);
+  const fetchDevices = async () => {
+    try {
+      const response = await fetch(`${API_BASE}server/devices`, {
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setDevices(data);
+      } else {
+        console.log("Failed to fetch devices from /api/server/devices");
         setDevices([]);
       }
-    };
+    } catch (error) {
+      console.log("Failed to fetch devices:", error);
+      setDevices([]);
+    }
+  };
 
-    const fetchSessions = async () => {
-      try {
-        const response = await fetch(`${API_BASE}server/counters`, {
-          credentials: "include",
-        });
-        if (response.ok) {
-          const data = await response.json();
-          setCounters(data);
-        } else {
-          console.log("Failed to fetch sessions from /api/server/counters");
-          setCounters([]);
-        }
-      } catch (error) {
-        console.log("Failed to fetch sessions:", error);
+  const fetchSessions = async () => {
+    try {
+      const response = await fetch(`${API_BASE}server/counters`, {
+        credentials: "include",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setCounters(data);
+      } else {
+        console.log("Failed to fetch sessions from /api/server/counters");
         setCounters([]);
       }
-    };
+    } catch (error) {
+      console.log("Failed to fetch sessions:", error);
+      setCounters([]);
+    }
+  };
 
+  useEffect(() => {
     fetchDevices();
     fetchSessions();
   }, []);

@@ -38,8 +38,8 @@ export default function DashboardPage() {
 
   const router = useRouter();
 
+  // Server check logic
   useEffect(() => {
-    // Server check logic
     const checkServer = async () => {
       try {
         const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
@@ -53,74 +53,82 @@ export default function DashboardPage() {
       }
     };
     checkServer();
-    // ...existing code...
-    const fetchDashboardData = async () => {
-      try {// Current Queue Status
-        const sessionRes = await fetch(`${API_BASE}server/dashboard/queue`, {
-          credentials: 'include'
-        });
-        const sessionText = await sessionRes.text();
-        const sessionData = sessionText ? JSON.parse(sessionText) : {};
-        setQueueData({
-          usersInQueue: sessionData.usersInQueue ?? 0,
-          lastSession: sessionData.lastSession ?? "None",
-        });
-
-        // Active users
-        const devicesRes = await fetch(`${API_BASE}server/dashboard/users`, {
-          credentials: 'include'
-        });
-        const devicesText = await devicesRes.text();
-        const devicesData = devicesText ? JSON.parse(devicesText) : 0;
-        setActiveUsers(devicesData);
-
-        // Connected devices
-        const connectedRes = await fetch(`${API_BASE}session/all`, {
-          credentials: 'include'
-        });
-        const connectedText = await connectedRes.text();
-        const connectedData = connectedText ? JSON.parse(connectedText) : {};
-        setConnectedDevices(Object.keys(connectedData).length);
-
-        // Active counters
-        const countersRes = await fetch(`${API_BASE}server/counters`, {
-          credentials: 'include'
-        });
-        const countersText = await countersRes.text();
-        const countersData = countersText ? JSON.parse(countersText) : [];
-        setActiveCounters(
-          Array.isArray(countersData)
-            ? countersData.filter((c: { status: string }) => c.status?.toLowerCase() === "active").length
-            : 0
-        );
-
-        // Summary Table
-        const summaryRes = await fetch(`${API_BASE}server/dashboard/summary`, {
-          credentials: "include",
-        });
-        const summaryText = await summaryRes.text();
-        const summaryData = summaryText ? JSON.parse(summaryText) : {};
-        setSummary({
-          requestsToday: summaryData.requestsToday ?? 0,
-          avgWaitTime: summaryData.avgWaitTime ?? 0,
-          totalUptime: summaryData.totalUptime ?? 0,
-        });
-
-        // Fetch QR codes
-        const qrRes = await fetch(`${API_BASE}server/qr`, {
-          credentials: "include",
-        });
-        const qrText = await qrRes.text();
-        const qrObj = qrText ? JSON.parse(qrText) : {};
-        setQrData(qrObj && typeof qrObj === "object" ? qrObj : {});
-      } catch (err) {
-        // ...existing error handling...
-        setQrData({});
-      }
-    };
-
     fetchDashboardData();
+
+    // Set interval to refresh dashboard data every 5 seconds
+    const interval = setInterval(() => {
+      fetchDashboardData();
+    }, 500);
+    // Clean up interval on unmount
+    return () => clearInterval(interval);
   }, []);
+
+  // Expose fetchDashboardData so it can be called to reload dashboard data
+  const fetchDashboardData = async () => {
+    try {
+      // Current Queue Status
+      const sessionRes = await fetch(`${API_BASE}server/dashboard/queue`, {
+        credentials: 'include'
+      });
+      const sessionText = await sessionRes.text();
+      const sessionData = sessionText ? JSON.parse(sessionText) : {};
+      setQueueData({
+        usersInQueue: sessionData.usersInQueue ?? 0,
+        lastSession: sessionData.lastSession ?? "None",
+      });
+
+      // Active users
+      const devicesRes = await fetch(`${API_BASE}server/dashboard/users`, {
+        credentials: 'include'
+      });
+      const devicesText = await devicesRes.text();
+      const devicesData = devicesText ? JSON.parse(devicesText) : 0;
+      setActiveUsers(devicesData);
+
+      // Connected devices
+      const connectedRes = await fetch(`${API_BASE}session/all`, {
+        credentials: 'include'
+      });
+      const connectedText = await connectedRes.text();
+      const connectedData = connectedText ? JSON.parse(connectedText) : {};
+      setConnectedDevices(Object.keys(connectedData).length);
+
+      // Active counters
+      const countersRes = await fetch(`${API_BASE}server/counters`, {
+        credentials: 'include'
+      });
+      const countersText = await countersRes.text();
+      const countersData = countersText ? JSON.parse(countersText) : [];
+      setActiveCounters(
+        Array.isArray(countersData)
+          ? countersData.filter((c: { status: string }) => c.status?.toLowerCase() === "active").length
+          : 0
+      );
+
+      // Summary Table
+      const summaryRes = await fetch(`${API_BASE}server/dashboard/summary`, {
+        credentials: "include",
+      });
+      const summaryText = await summaryRes.text();
+      const summaryData = summaryText ? JSON.parse(summaryText) : {};
+      setSummary({
+        requestsToday: summaryData.requestsToday ?? 0,
+        avgWaitTime: summaryData.avgWaitTime ?? 0,
+        totalUptime: summaryData.totalUptime ?? 0,
+      });
+
+      // Fetch QR codes
+      const qrRes = await fetch(`${API_BASE}server/qr`, {
+        credentials: "include",
+      });
+      const qrText = await qrRes.text();
+      const qrObj = qrText ? JSON.parse(qrText) : {};
+      setQrData(qrObj && typeof qrObj === "object" ? qrObj : {});
+    } catch (err) {
+      // ...existing error handling...
+      setQrData({});
+    }
+  };
 
   return (
     <div className="dashboard-container">
