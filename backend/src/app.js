@@ -13,8 +13,20 @@ import { sessionMiddleware, recordSession } from "./middleware/session.js";
 dotenv.config();
 
 const app = express();
+const allowedOrigins = [
+  `${process.env.NEXT_PUBLIC_API_URL}:3000`,
+  `${process.env.NEXT_PUBLIC_API_URL}:3001`,
+  `${process.env.NEXT_PUBLIC_API_URL}:3002`
+];
+
 const corsOptions = {
-  origin: process.env.FRONTEND_ORIGIN || true, // Allow all origins for development
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
