@@ -43,7 +43,9 @@ export default function DashboardPage() {
     const checkServer = async () => {
       try {
         const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000";
-        const response = await fetch(`${BASE_URL}/api/server/check`, { credentials: "include" });
+        const response = await fetch(`${BASE_URL}/api/server/check`, { 
+          credentials: "include" 
+        });
         const data = await response.json();
         if (!data.isServer) {
           router.replace("/unauthorized");
@@ -51,16 +53,12 @@ export default function DashboardPage() {
       } catch {
         router.replace("/unauthorized");
       }
+    setTimeout(() => {
+
+      fetchDashboardData();
+    }, 1000)
     };
     checkServer();
-    fetchDashboardData();
-
-    // Set interval to refresh dashboard data every 5 seconds
-    const interval = setInterval(() => {
-      fetchDashboardData();
-    }, 500);
-    // Clean up interval on unmount
-    return () => clearInterval(interval);
   }, []);
 
   // Expose fetchDashboardData so it can be called to reload dashboard data
